@@ -1,0 +1,84 @@
+<?php
+
+namespace Export;
+
+use \RedBeanPHP\R as R;
+use Util\Config;
+use App\Spreadsheet;
+use Util\Helper;
+
+class Imaging
+{
+    public $table = 'users';
+
+    private $output;
+    private $export_option;
+
+    public function __construct($output, $export_option = null)
+    {
+        $this->output = $output;
+        if (!empty($export_option)) {
+            $this->export_option = $export_option;
+        } else {
+            $this->export_option = Config::$default_export;
+        }
+    }
+
+    // get counted progress
+    public function count()
+    {
+        R::setup('mysql:host=localhost:3306;dbname=database_name', 'root', '');
+        return R::count($this->table);
+    }
+
+    public function export()
+    {
+        $this->output->writeln('Getting data from database');
+        R::setup('mysql:host=localhost:3306;dbname=database_name', 'root', '');
+        // TODO boost performance by deviding from id [indexFrom] to [indexEnd]
+        $users = R::getAll('SELECT * FROM ' . $this->table);
+
+        $this->output->writeln('Building header');
+        #header
+        $header = [
+            'id',
+            'name',
+            'email',
+            'password',
+            'created_at',
+            'updated_at'
+        ];
+
+        $this->output->writeln('Building content');
+        #Content
+        $datas = [];
+        foreach ($users as $row => $user) {
+            $data = [
+                $user['id'],
+                $$user['name'],
+                $$user['email'],
+                $$user['password'],
+            ];
+            array_push($datas, $data);
+        }
+
+        $this->output->writeln('Writing to data');
+        
+        switch ($this->export_option) {
+            case 'excel':
+                $this->excel($this->output, $header, $datas);
+                break;
+
+            default:
+                $this->excel($this->output, $header, $datas);
+                break;
+        }
+    }
+
+    // export function
+    function excel($output, $header, $data)
+    {
+        $spreadsheet = new Spreadsheet(null, $output, $this->table, $header, $data);
+        $spreadsheet->generate();
+    }
+}

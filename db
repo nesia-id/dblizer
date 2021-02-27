@@ -1,0 +1,16 @@
+<?php
+require __DIR__ . '/vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+use Util\IO;
+
+$app = new Application('dblizer', '1.0.0');
+foreach (scandir(__DIR__ . '/Command') as $filename) {
+    $path = __DIR__ . '/Command/' . $filename;
+    $namespace = 'Command\\' . IO::pathinfo_enhanced($path)['filename'];
+    if (is_file($path)) {
+        // $app->register(new $path());
+        $app->add(new $namespace());
+    }
+}
+$app->run();

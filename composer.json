@@ -1,0 +1,17 @@
+{
+  "require": {
+    "symfony/console": "^5.2",
+    "phpoffice/phpspreadsheet": "^1.16",
+    "gabordemooij/redbean": "dev-master",
+    "nesbot/carbon": "^2.45",
+    "spatie/async": "^1.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/",
+      "Command\\": "command/",
+      "Export\\": "export/",
+      "Util\\": "util/"
+    }
+  }
+}
