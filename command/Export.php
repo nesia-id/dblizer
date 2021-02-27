@@ -18,19 +18,19 @@ class Export extends Command
         $this
             ->setDescription('Export data to Excel files')
             ->setHelp('This command allows you to export data from database to excel')
-            ->addArgument('table', InputArgument::OPTIONAL, 'Your table name?');
+            ->addArgument('export', InputArgument::OPTIONAL, 'Your export name?');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($input->getArgument('table')) {
-            $output->writeln($input->getArgument('table'));
-            if (is_file(dirname(__DIR__ . '/export/' . $input->getArgument('table') . '.php'))) {
-                $namespace = 'Export\\' . $input->getArgument('table');
+        if ($input->getArgument('export')) {
+            $output->writeln($input->getArgument('export'));
+            if (is_file(dirname(__DIR__) . '/export/' . $input->getArgument('export') . '.php')) {
+                $namespace = 'Export\\' . $input->getArgument('export');
                 $export = new $namespace($output, 'excel');
                 $export->export();
             } else {
-                $output->writeln('Export table of "' . $input->getArgument('table') . ' not exists"');
+                $output->writeln('Export of "' . $input->getArgument('export') . '" not exists');
                 return Command::FAILURE;
             }
         } else {
