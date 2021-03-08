@@ -7,9 +7,9 @@ use Util\Config;
 use App\Spreadsheet;
 use Util\Helper;
 
-class Imaging
+class {{ model }}
 {
-    public $table = 'users';
+    public $table = '{{ table }}';
 
     private $output;
     private $export_option;
@@ -27,37 +27,33 @@ class Imaging
     // get counted progress
     public function count()
     {
-        R::setup('mysql:host=localhost:3306;dbname=database_name', 'root', '');
+        if(!R::testConnection()){
+            R::setup('mysql:host='.$_ENV['DB_HOST'].':'.$_ENV['DB_PORT'].';dbname='.$_ENV['DB_DATABASE'].'', $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD']);
+        }
         return R::count($this->table);
     }
 
     public function export()
     {
         $this->output->writeln('Getting data from database');
-        R::setup('mysql:host=localhost:3306;dbname=database_name', 'root', '');
+        if(!R::testConnection()){
+            R::setup('mysql:host='.$_ENV['DB_HOST'].':'.$_ENV['DB_PORT'].';dbname='.$_ENV['DB_DATABASE'].'', $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD']);
+        }
         // TODO boost performance by deviding from id [indexFrom] to [indexEnd]
-        $users = R::getAll('SELECT * FROM ' . $this->table);
+        ${{ pluralAlias }} = R::getAll('SELECT * FROM ' . $this->table);
 
         $this->output->writeln('Building header');
         #header
         $header = [
-            'id',
-            'name',
-            'email',
-            'password',
-            'created_at',
-            'updated_at'
+{{ header }}
         ];
 
         $this->output->writeln('Building content');
         #Content
         $datas = [];
-        foreach ($users as $row => $user) {
+        foreach (${{ pluralAlias }} as $row => ${{ alias }}) {
             $data = [
-                $user['id'],
-                $$user['name'],
-                $$user['email'],
-                $$user['password'],
+{{ content }}
             ];
             array_push($datas, $data);
         }
@@ -75,7 +71,6 @@ class Imaging
         }
     }
 
-    // export function
     function excel($output, $header, $data)
     {
         $spreadsheet = new Spreadsheet(null, $output, $this->table, $header, $data);

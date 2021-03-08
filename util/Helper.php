@@ -276,7 +276,9 @@ class Helper
         'CT Scan',
         'FNAB/Core',
         'Histopatologi',
-        'IHK'
+        'IHK',
+        'FNAB',
+        'Core'
     ];
 
     public static function all($name, $object = true)

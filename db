@@ -3,8 +3,16 @@ require __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 use Util\IO;
+use Dotenv\Dotenv;
 
 $app = new Application('dblizer', '1.0.0');
+// check .env file
+if (is_file(__DIR__ . '/.env')){
+    $env = Dotenv::createImmutable(__DIR__);
+    $env->load();
+}
+
+//load all command
 foreach (scandir(__DIR__ . '/Command') as $filename) {
     $path = __DIR__ . '/Command/' . $filename;
     $namespace = 'Command\\' . IO::pathinfo_enhanced($path)['filename'];
