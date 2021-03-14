@@ -54,7 +54,7 @@ class Spreadsheet
         }
 
         if (empty($this->destination)) {
-            $workbook->save('data/' . $this->table . $filedate . '.xlsx');
+            $workbook->save('data/' . $this->table . "-" . $filedate . '.xlsx');
         } else {
             $workbook->save($this->destination);
         }
